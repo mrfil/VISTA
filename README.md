@@ -1,1 +1,2 @@
-# NIfTI2VR
+# VISTA
+# Visualization of Image Segmentation by Transformation and Analysis
