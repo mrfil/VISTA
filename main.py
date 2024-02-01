@@ -24,7 +24,7 @@ def call_docker(path_to_volume, commands):
     try:
         print('calling container')
         subprocess.run(["docker", "run", "--name=mne_bpy", "-it", "--rm", "-d", "-v",
-                       path_to_volume+":/VISTA_vol", "mne_bpy"], check=True)
+                       path_to_volume+":/VISTA", "mne_bpy"], check=True)
         for cmd in commands:
             subprocess.call(cmd, stdin=stdin, stdout=stdout, stderr=stderr, shell=True)
         subprocess.run(["docker", "stop", "mne_bpy"], check=True)
@@ -51,12 +51,12 @@ class App(QWidget):
         self.edf_file = None
         self.edf_path = None
         self._data = None
-        self.vol_path = '/VISTA_vol/VISTA/'
+        self.vol_path = '/VISTA/'
         self.output = f'{self.vol_path}Outputs/'
         self.obj = f'{self.output}obj/'
         self.nifti_out_dir = f'{self.output}Nifti/'
 
-        self.real_path = f'{pathlib.Path(__file__).parents[1]}'
+        self.real_path = f'{pathlib.Path(__file__).cwd()}'
         self.initUI()
         self.name_boxes = []
 
