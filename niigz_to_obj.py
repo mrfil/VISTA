@@ -28,7 +28,7 @@ def convert_nii_to_obj(file, out_name):
     # xflip to fix radiological view
     new_data = np.flip(data, 0)
     # new_data = data
-    verts, faces, normals, values = marching_cubes(new_data, method='lewiner', step_size=5, allow_degenerate=False)
+    verts, faces, normals, values = marching_cubes(new_data, method='lewiner', step_size=1, allow_degenerate=False)
     faces = faces+1
 
     '''

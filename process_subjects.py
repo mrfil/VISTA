@@ -10,7 +10,7 @@ def call_fsl(cmd, pipe):
 
 
 def process(mri_file):
-    output_folder = '/VISTA_vol/VISTA/Outputs/'
+    output_folder = '/VISTA/Outputs/'
     file_mri_struct = mri_file
     pipe = subprocess.PIPE
     print("MRI Filename loaded: " + str(file_mri_struct))
