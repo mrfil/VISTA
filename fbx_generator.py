@@ -32,7 +32,7 @@ def generate_fbx(obj_directory, out_name):
             fname = os.path.splitext(f)[0]
             fname = fname.rsplit('/', 1)[1]
             # import obj files
-            bpy.ops.import_scene.obj(filepath=f)
+            bpy.ops.wm.obj_import(filepath=f)
             # generate new material
             mat = bpy.data.materials.new(name=fname + '_mat')
             mat.diffuse_color = (random(), random(), random(), 0.1)
