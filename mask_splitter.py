@@ -4,23 +4,19 @@ import argparse
 import scipy.ndimage as ndimage
 
 
-def mask_splitter_4d(infile, outdir):
+def mask_splitter(infile, outdir):
     img = nib.load(infile)
     header = img.header
     img_data = img.get_fdata()
     img_data = img_data.astype(int, casting="unsafe")
     object_labels = np.unique(img_data)
+    object_labels = object_labels[object_labels != 0]
     print(object_labels)
-    # for each time slice
-    for i in range(0, np.shape(img_data)[3]):
-        img_slice = img_data[:,:,:,i]
-        # for each object in the labelled set, mask and only use one object at a time
-        for j in range(1, len(object_labels)):
-            mask = img_slice == object_labels[j]
-            isolated_object = np.zeros_like(img_slice)
-            isolated_object[mask] = object_labels[j]
-            iso_img = nib.Nifti1Image(isolated_object, None, dtype="int64")
-            nib.save(iso_img, f'{outdir}slice{i}_obj{j}.nii.gz')
+    # for each object in the labelled set, mask and only use one object at a time
+    for label in object_labels:
+        mask = (img_data == label).astype(np.uint8)
+        iso_img = nib.Nifti1Image(mask, None, dtype="int64")
+        nib.save(iso_img, f'{outdir}_obj{label}.nii.gz')
 
 
 if __name__ == "__main__":
@@ -30,4 +26,4 @@ if __name__ == "__main__":
     parser.add_argument("outdir", help="directory for output nifti files")
     args = parser.parse_args()
     print(args.infile, args.outdir)
-    mask_splitter_4d(args.infile, args.outdir)
+    mask_splitter(args.infile, args.outdir)

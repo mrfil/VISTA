@@ -86,11 +86,9 @@ class App(QWidget):
 
         mri_idx = self.layout().indexOf(mri_choice)
 
-        self.mri_label = QLabel("MRI file: ", self)
+        self.mri_label = QLabel("Input file: ", self)
         button_box.insertWidget(mri_idx + 1, self.mri_label)
 
-        self.mask_label = QLabel("Label Mask file: ", self)
-        button_box.insertWidget(mri_idx + 3, self.mask_label)
 
         # Begin the preprocessing, segmentation steps prior to electrodes needing labels
         process_button = QPushButton("Process MRI")
@@ -123,26 +121,30 @@ class App(QWidget):
         call_docker(self.real_path, cmd)
 
     def process_mask(self):
+        print('button clicked')
         command = []
-        cmd = f'docker exec mne_bpy bash -c \" python3.9 -u {self.vol_path}convert_to_iso.py ' \
-              f'{self.mri_file} ' \
-              f'{self.vol_path}structures_iso.nii.gz\"'
-        command.append(cmd)
-
         cmd = f'docker exec mne_bpy bash -c \" python3.9 -u {self.vol_path}mask_splitter.py ' \
-              f'{self.vol_path}structures_iso.nii.gz ' \
+              f'{self.vol_path}Inputs/{self.mri_file} ' \
               f'{self.nifti_out_dir}\"'
         command.append(cmd)
+        call_docker(self.real_path, command)
 
-        for file in os.listdir(f'{self.real_path}VISTA/Outputs/Nifti/'):
+        command = []
+        for file in os.listdir(f'Outputs/Nifti/'):
             print(file)
-            f = os.path.join(f'{self.nifti_out_dir}', file)
-            fname = f'{os.path.splitext(file)[0]}'
-            print(f)
-            cmd = f'docker exec mne_bpy bash -c \" python3.9 -u {self.vol_path}niigz_to_obj.py ' \
-                  f'{f} ' \
-                  f'{self.obj_out_dir}{fname}.obj\"'
+            #f = os.path.join(f'{self.nifti_out_dir}', file)
+            #convert file to iso
+            cmd = f'docker exec mne_bpy bash -c \" python3.9 -u {self.vol_path}convert_to_iso.py ' \
+                  f'{self.nifti_out_dir}{file} ' \
+                  f'{self.nifti_out_dir}{file}\"'
             command.append(cmd)
+            # convert iso img to obj
+            fname = f'{os.path.splitext(file)[0]}'
+            cmd = f'docker exec mne_bpy bash -c \" python3.9 -u {self.vol_path}niigz_to_obj.py ' \
+                  f'{self.nifti_out_dir}{file} ' \
+                  f'/VISTA/Outputs/obj/{fname}.obj\"'
+            command.append(cmd)
+        call_docker(self.real_path, command)
 
     def process_sub(self):
         if self.mri_file is None:
