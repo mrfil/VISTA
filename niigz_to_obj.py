@@ -5,15 +5,6 @@ import numpy as np
 from skimage.measure import marching_cubes
 from scipy.ndimage import zoom
 
-#SEEG0001img_T1_3D_AX_FSPGR_20121118083857_12.nii.gz
-# (x, y, z) = (256, 256, 172)
-# header.dims = [3 256 256 172 1 1 1 1]
-# header.pixdim = [1. 0.9766 0.9766 1. 0.007304 0. 0. 0.]
-'''base_mri = 'SEEG0001img_T1_3D_AX_FSPGR_20121118083857_12.nii.gz'
-base_img = nib.load(base_mri)
-print(base_img.header)
-base_pxdims = base_img.header['pixdim'][1:4]
-print(base_pxdims)'''
 
 
 def convert_nii_to_obj(file, out_name):
